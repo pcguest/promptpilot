@@ -1,0 +1,88 @@
+# Ruff Configuration for PromptPilot
+# See https://beta.ruff.rs/docs/configuration/ for all options
+
+# --- Basic Setup ---
+# Assume Python 3.8+ as per README
+target-version = "py38"
+
+# Line length
+line-length = 88 # Default for Black
+
+# --- Rule Selection ---
+# Start with a common set of rules.
+# pycodestyle (E, W), Pyflakes (F), pyupgrade (UP), flake8-bugbear (B)
+# You can add more specific rule sets or individual rules as needed.
+# E.g., "I" for isort, "C90" for McCabe complexity, "ANN" for flake8-annotations.
+select = ["E", "W", "F", "UP", "B"]
+
+# Some rules might be too strict or conflict with other tools/styles.
+# Ignore specific rules if necessary.
+# ignore = ["E501"] # Example: if you sometimes need longer lines despite line-length.
+
+# --- File System Configuration ---
+# List of files and directories to exclude from linting and formatting.
+# By default, Ruff respects .gitignore.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "venv",
+    "ENV",
+    "env",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site",
+    "*.egg-info",
+    # Add any other project-specific exclusions here
+]
+
+# --- Per-File Ignores (Optional) ---
+# You can ignore specific rules for certain files or glob patterns.
+# [tool.ruff.per-file-ignores]
+# "tests/*" = ["ANN201", "ANN001"] # Example: ignore missing type hints in tests
+
+# --- Formatter Configuration (Ruff's own formatter) ---
+# Ruff now includes a built-in formatter, an alternative to Black.
+# If you enable this, you might not need Black separately.
+# To use it: `ruff format .`
+# To check formatting: `ruff check . --select I001` (for import sorting, if not using isort rule)
+# Or simply `ruff format --check .`
+# format.quote-style = "double" # Or "single"
+# format.indent-style = "space" # Or "tab"
+# format.skip-magic-trailing-comma = false # Or true
+# format.line-ending = "auto" # Or "lf", "crlf", "cr"
+
+# --- Isort Configuration (if using Ruff's isort integration "I") ---
+# If you add "I" to `select`, these settings apply.
+# [tool.ruff.isort]
+# force-single-line = true
+# known-first-party = ["promptpilot"] # Important for your project's modules
+
+# --- Pytest Specifics (if using flake8-pytest-style "PT") ---
+# If you add "PT" to `select`:
+# [tool.ruff.flake8-pytest-style]
+# fixture-parentheses = true # e.g. @pytest.fixture() not @pytest.fixture
+# mark-parentheses = true # e.g. @pytest.mark.foo() not @pytest.mark.foo
+
+# --- Recommendations ---
+# 1. Install Ruff: `pip install ruff`
+# 2. Run checks: `ruff check .`
+# 3. Run auto-fixes (if any): `ruff check . --fix`
+# 4. (Optional) Use Ruff's formatter: `ruff format .`
+# 5. Consider integrating with your IDE and pre-commit hooks.
+#    https://beta.ruff.rs/docs/guides/pre-commit/
+#    https://beta.ruff.rs/docs/integrations/

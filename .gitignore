@@ -49,11 +49,9 @@ celerybeat-schedule.*
 # Rope
 .ropeproject
 # MkDocs
-/site/
 # Pelican
 /output/
 # Nikola
-/output/
 # Sphinx
 /_build/
 # PyBuilder
@@ -61,13 +59,11 @@ target/
 # tox
 .tox/
 # dotenv
-.env
 # Coverage
 .coverage
 coverage.xml
 htmlcov/
 # C extensions
-*.so
 # Cython
 *.pyd
 *.html  # Cython HTML reports
@@ -78,12 +74,9 @@ htmlcov/
 # Byte-compiled / optimized / DLL files
 *.pyc
 *.pyo
-*.pyd
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -100,24 +93,16 @@ share/python-wheels/
 # PyInstaller
 # Usually these files are written by a python script from a template
 # before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
 # Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
 .coverage.*
 .cache
 nosetests.xml
-coverage.xml
 *.cover
 *.log
 # pyenv
-.python-version
 # poetry
 poetry.lock
 # pdm
@@ -129,17 +114,10 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 # SageMath parsed files
-*.sage.py
 # Environments
-.env
-.venv
-env/
-venv/
-ENV/
 env.bak/
 venv.bak/
 # mypy
-.mypy_cache/
 dmypy.json
 dmypy.sock
 # Pyre type checker

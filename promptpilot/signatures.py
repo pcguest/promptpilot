@@ -12,15 +12,15 @@ class BasicQASignature(dspy.Signature):
 # Future signatures can be added here, for example:
 #
 # class SummarizationSignature(dspy.Signature):
-#     """Summarizes a given text."""
-#     __doc__ = "Summarizes a given text."
-#     text_to_summarize = dspy.InputField(desc="The input text that needs summarization.")
+#     """Summarises a given text."""
+#     __doc__ = "Summarises a given text."
+#     text_to_summarize = dspy.InputField(desc="The input text that needs summarisation.")
 #     summary = dspy.OutputField(desc="A brief summary of the input text.")
 #
 # class SentimentAnalysisSignature(dspy.Signature):
-#     """Analyzes the sentiment of a piece of text."""
-#     __doc__ = "Analyzes the sentiment of a piece of text."
-#     text_input = dspy.InputField(desc="The text to analyze.")
+#     """Analyses the sentiment of a piece of text."""
+#     __doc__ = "Analyses the sentiment of a piece of text."
+#     text_input = dspy.InputField(desc="The text to analyse.")
 #     sentiment = dspy.OutputField(desc="The detected sentiment (e.g., positive, negative, neutral).")
 #     confidence_score = dspy.OutputField(desc="A score indicating the confidence of the sentiment analysis.")
 

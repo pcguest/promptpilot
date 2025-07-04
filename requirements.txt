@@ -17,4 +17,6 @@ python-dotenv
 
 # For development and linting (optional, manage with your own environment)
 # ruff
-# pytest
+
+# For testing
+pytest
