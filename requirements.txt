@@ -1,0 +1,20 @@
+# DSPy framework
+dspy-ai==3.0.0b2
+
+# LLM Providers - uncomment and install the ones you need
+# openai~=1.0
+# anthropic
+# cohere
+# google-generativeai
+# huggingface_hub
+# transformers
+
+# Environment variable management
+python-dotenv
+
+# For the optional Streamlit UI
+# streamlit
+
+# For development and linting (optional, manage with your own environment)
+# ruff
+# pytest
