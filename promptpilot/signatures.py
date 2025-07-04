@@ -2,41 +2,52 @@ import dspy
 
 class BasicQASignature(dspy.Signature):
     """Answers questions concisely."""
-    # The __doc__ attribute can be used by DSPy optimizers.
-    # Alternatively, a class-level docstring like the one above also works.
+    # The docstring of the class itself (like the one above) is used by DSPy
+    # for understanding the purpose of the signature, especially for optimisers.
+    # Setting __doc__ explicitly is an alternative but not necessary if a class docstring is present.
     # __doc__ = "Answers questions concisely."
 
-    question = dspy.InputField(desc="The question to be answered.")
-    answer = dspy.OutputField(desc="A concise and direct answer to the question.")
+    question = dspy.InputField(desc="The question that needs to be answered.")
+    answer = dspy.OutputField(desc="A concise and direct answer to the provided question.")
 
-# Future signatures can be added here, for example:
+# Additional signatures can be defined below for other tasks. For example:
 #
-# class SummarizationSignature(dspy.Signature):
-#     """Summarizes a given text."""
-#     __doc__ = "Summarizes a given text."
-#     text_to_summarize = dspy.InputField(desc="The input text that needs summarization.")
-#     summary = dspy.OutputField(desc="A brief summary of the input text.")
+# class TextSummarisationSignature(dspy.Signature):
+#     """Summarises a given piece of text."""
+#     # __doc__ = "Summarises a given piece of text." # Alternative way to set description
+#
+#     text_to_summarise = dspy.InputField(desc="The input text requiring summarisation.")
+#     summary = dspy.OutputField(desc="A brief and coherent summary of the input text.")
 #
 # class SentimentAnalysisSignature(dspy.Signature):
-#     """Analyzes the sentiment of a piece of text."""
-#     __doc__ = "Analyzes the sentiment of a piece of text."
-#     text_input = dspy.InputField(desc="The text to analyze.")
+#     """Analyses the sentiment of a given piece of text."""
+#     # __doc__ = "Analyses the sentiment of a given piece of text."
+#
+#     text_input = dspy.InputField(desc="The text for which sentiment is to be analysed.")
 #     sentiment = dspy.OutputField(desc="The detected sentiment (e.g., positive, negative, neutral).")
-#     confidence_score = dspy.OutputField(desc="A score indicating the confidence of the sentiment analysis.")
+#     confidence_score = dspy.OutputField(desc="A numerical score indicating the confidence of the sentiment analysis.")
 
 if __name__ == '__main__':
-    # Example of how signatures might be inspected or used directly (though typically used within Modules)
-    print("Available Signatures in this module:")
+    # This block provides an example of how signatures can be inspected.
+    # Signatures are typically used within DSPy Modules (via dspy.Predict or dspy.ChainOfThought, etc.)
+    # rather than being instantiated or called directly in this manner.
+    print("Demonstrating inspection of defined Signatures in this module:")
 
     print(f"\n--- {BasicQASignature.__name__} ---")
-    print(f"Description: {BasicQASignature.__doc__}")
-    print("Inputs:")
+    # The effective description used by DSPy is derived from the class docstring or __doc__.
+    print(f"Effective Description for DSPy: {BasicQASignature.__doc__}")
+    print("Input Fields:")
     for name, field in BasicQASignature.inputs().items():
-        print(f"  - {name}: {field.desc}")
-    print("Outputs:")
+        print(f"  - Name: '{name}', Description: '{field.desc}'")
+    print("Output Fields:")
     for name, field in BasicQASignature.outputs().items():
-        print(f"  - {name}: {field.desc}")
+        print(f"  - Name: '{name}', Description: '{field.desc}'")
 
-    # You could instantiate a signature if needed, though it's rare to do so outside a Predictor.
-    # sig = BasicQASignature()
-    # print(f"\nInstantiated signature: {sig}")
+    # It's generally not common to instantiate a signature directly like this for typical use,
+    # as DSPy's Predictors and other components handle their instantiation and usage.
+    # sig_instance = BasicQASignature()
+    # print(f"\nExample of an instantiated signature object: {sig_instance}")
+    # print(f"Instantiated signature's question field: {sig_instance.question}")
+    # print(f"Instantiated signature's answer field: {sig_instance.answer}")
+
+    print("\nNote: Signatures define the structure of inputs and outputs for LM interactions within DSPy.")

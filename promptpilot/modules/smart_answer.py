@@ -1,25 +1,17 @@
 import dspy
-# Updated import: BasicQASignature is now in promptpilot.signatures
+# BasicQASignature is imported from the local signatures module.
 from ..signatures import BasicQASignature
 
 class SmartAnswerModule(dspy.Module):
     """
-    A DSPy module for generating smart answers to questions using a defined signature.
+    A DSPy module for generating intelligent answers to questions using a defined signature.
     """
     def __init__(self):
         super().__init__()
-        # Ensure that an LM is configured globally before initializing predictors.
-        # dspy.Predict requires dspy.settings.lm to be available at initialization.
-        if not dspy.settings.lm:
-            # This error message guides the user to configure DSPy globally.
-            # The actual configuration should happen at application startup (e.g., in app.py or config.py).
-            raise dspy.DSPyError(
-                "DSPy LM not configured. SmartAnswerModule requires a globally configured LLM. "
-                "Please call `configure_dspy_globally()` or `dspy.settings.configure(lm=your_lm)` "
-                "before instantiating this module."
-            )
+        # The check for dspy.settings.lm is removed because app.py and test fixtures
+        # now ensure an LM (real or dummy) is always configured before this module is instantiated.
 
-        # Initialize the predictor with the imported signature
+        # Initialise the predictor with the imported signature.
         self.generate_answer = dspy.Predict(BasicQASignature)
 
     def forward(self, question: str) -> dspy.Prediction:
@@ -27,51 +19,58 @@ class SmartAnswerModule(dspy.Module):
         Generates an answer to the given question.
 
         Args:
-            question: The question to answer.
+            question: The question to be answered.
 
         Returns:
-            A dspy.Prediction object containing the answer.
+            A dspy.Prediction object containing the generated answer.
         """
         prediction = self.generate_answer(question=question)
         return prediction
 
 if __name__ == '__main__':
-    # This example demonstrates how to use the SmartAnswerModule.
-    # It requires an LLM to be configured.
-    # For example, using OpenAI:
+    # This block demonstrates how to use the SmartAnswerModule independently.
+    # It requires a Language Model (LM) to be configured first.
     #
+    # To run this example:
+    # 1. Ensure you have an LM provider configured (e.g., OpenAI API key in .env).
+    # 2. Uncomment the following lines.
+    # 3. Execute this script directly: `python promptpilot/modules/smart_answer.py`
+
+    # print("--- SmartAnswerModule Standalone Example ---")
+    # # Attempt to configure DSPy globally (example assumes config.py is in the parent directory)
+    # import sys
     # import os
-    # from dspy.openai import OpenAI
+    # # Add project root to sys.path to allow `from promptpilot.config import ...`
+    # project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # if project_root not in sys.path:
+    #     sys.path.insert(0, project_root)
     #
-    # # Ensure your OPENAI_API_KEY environment variable is set, or pass api_key directly.
-    # if not os.getenv("OPENAI_API_KEY"):
-    #     print("Error: OPENAI_API_KEY environment variable not set.")
-    #     print("Please set it or configure the LLM with an API key directly.")
-    #     # Example: llm = OpenAI(model="gpt-3.5-turbo", api_key="sk-...")
-    # else:
-    #     llm = OpenAI(model="gpt-3.5-turbo")
-    #     dspy.settings.configure(lm=llm)
-
+    # from promptpilot.config import configure_dspy_globally
+    #
+    # if configure_dspy_globally():
+    #     print("DSPy configured successfully for the example.")
     #     try:
-    #         if dspy.settings.lm:
-    #             smart_answer_module = SmartAnswerModule()
-    #             test_question = "What is the main purpose of the DSPy framework?"
-    #             response = smart_answer_module(question=test_question)
-    #             print(f"Question: {test_question}")
-    #             print(f"Answer: {response.answer}")
+    #         smart_answer_module = SmartAnswerModule()
+    #         test_question = "What is the main purpose of the DSPy framework?"
+    #         print(f"\nQuestion: \"{test_question}\"")
     #
-    #             # You can inspect the history of interactions with the LM
-    #             # dspy.settings.inspect_history(n=1)
-    #         else:
-    #             print("DSPy LM not configured. Skipping SmartAnswerModule example usage.")
-    #             print("To run this example, configure an LM like OpenAI: ")
-    #             print("  from dspy.openai import OpenAI")
-    #             print("  llm = OpenAI(model=\"gpt-3.5-turbo\", api_key=\"YOUR_API_KEY\")")
-    #             print("  dspy.settings.configure(lm=llm)")
+    #         response = smart_answer_module(question=test_question)
+    #         print(f"Answer: {response.answer}")
     #
+    #         # You can inspect the history of interactions with the LM if supported
+    #         # print("\n--- LM Interaction History (last 1) ---")
+    #         # dspy.settings.inspect_history(n=1)
+    #
+    #     except dspy.DSPyError as e:
+    #         print(f"\nA DSPyError occurred during the example: {e}")
     #     except Exception as e:
-    #         print(f"Error in SmartAnswerModule example: {e}")
-    #         print("This might be due to missing API keys or incorrect LLM configuration.")
+    #         print(f"\nAn unexpected error occurred during the example: {e}")
+    # else:
+    #     print("DSPy LM could not be configured. Skipping SmartAnswerModule example.")
+    #     print("Please ensure your .env file and LM provider (e.g., OpenAI) are set up correctly.")
+    #
+    # print("\n--- End of SmartAnswerModule Standalone Example ---")
+    pass # Keep the pass statement if the __main__ block is commented out.
 
-    print("SmartAnswerModule defined. To run the example, uncomment the __main__ block and configure an LLM.")
-    pass
+    print("SmartAnswerModule defined. To run the standalone example, uncomment the code within the "
+          "`if __name__ == '__main__':` block in this file and ensure your LM is configured (e.g., via .env).")

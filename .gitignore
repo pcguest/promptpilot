@@ -1,86 +1,11 @@
-# Python
+# Python Byte-compiled / Optimised / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-*.egg-info/
-dist/
-build/
-*.egg
-*.venv/
-venv/
-env/
-ENV/
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-# Icon must end with two \r
-Icon
-
-
-# Thumbnails
-._*
-# Files that might appear in the root of a volume
-.Spotlight-V100
-.Trashes
-# VSCode
-.vscode/
-# PyCharm
-.idea/
-# Jupyter Notebook
-.ipynb_checkpoints
-# MyPy
-.mypy_cache/
-# PyTest
-.pytest_cache/
-# Environments
-.env
-.python-version
-# Build artifacts
-/site/
-# Celery
-celerybeat-schedule.*
-# Sage
-*.sage.py
-# Spyder
-.spyderproject
-.spyproject
-# Rope
-.ropeproject
-# MkDocs
-/site/
-# Pelican
-/output/
-# Nikola
-/output/
-# Sphinx
-/_build/
-# PyBuilder
-target/
-# tox
-.tox/
-# dotenv
-.env
-# Coverage
-.coverage
-coverage.xml
-htmlcov/
-# C extensions
-*.so
-# Cython
 *.pyd
-*.html  # Cython HTML reports
-# IDE-specific
-*.swp
-*.swo
-*~
-# Byte-compiled / optimized / DLL files
-*.pyc
-*.pyo
-*.pyd
+
 # Distribution / packaging
-.Python
 build/
 develop-eggs/
 dist/
@@ -95,41 +20,20 @@ var/
 wheels/
 pip-wheel-metadata/
 share/python-wheels/
+*.egg-info/
+.Python
+*.egg
 *.manifest
 *.spec
+
 # PyInstaller
-# Usually these files are written by a python script from a template
-# before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# Usually these files are written by a Python script from a template
+# before PyInstaller builds the exe, so as to inject date/other information into it.
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-# pyenv
-.python-version
-# poetry
-poetry.lock
-# pdm
-pdm.lock
-.pdm.toml
-# PEP 582;
-__pypackages__/
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-# SageMath parsed files
-*.sage.py
+
 # Environments
 .env
 .venv
@@ -138,13 +42,76 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-# mypy
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon # Icon must end with two \r
+._* # Thumbnails
+.Spotlight-V100 # Files that might appear in the root of a volume
+.Trashes
+
+# IDE / Editor specific
+.vscode/
+.idea/ # PyCharm
+.spyderproject # Spyder
+.spyproject # Spyder
+.ropeproject # Rope
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Type Checkers
 .mypy_cache/
 dmypy.json
 dmypy.sock
-# Pyre type checker
 .pyre/
-# pytype
 .pytype/
-# Cython debug symbols
+
+# Testing & Coverage
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+nosetests.xml
+*.cover
+*.log # General log files, can be broad
+
+# Build artifacts & Tools
+/site/ # General build artifact directory, also MkDocs
+/output/ # Pelican, Nikola
+/_build/ # Sphinx
+target/ # PyBuilder
+
+# Python Version Management
+.python-version # pyenv
+
+# Dependency Management
+poetry.lock
+pdm.lock
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+celerybeat-schedule.* # More general pattern for schedule files
+
+# SageMath
+*.sage.py
+
+# Cython specific
+*.html # Cython HTML reports
 cython_debug/
+
+# Cache files
+.cache

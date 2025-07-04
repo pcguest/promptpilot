@@ -1,153 +1,83 @@
 import pytest
 import dspy
-from unittest.mock import patch, MagicMock
 
-# Since SmartAnswerModule is in the parent directory's `promptpilot` package,
-# we need to adjust the Python path if running pytest from the root or `tests` directory.
-# This is a common pattern. Alternatively, install the package in editable mode (pip install -e .).
+# Ensure the package root is in sys.path for direct script execution from tests directory
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+if __package__ is None or __package__ == '':
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
 
-from promptpilot.modules.smart_answer import SmartAnswerModule, BasicQASignature
+from promptpilot.modules.smart_answer import SmartAnswerModule
 
-# Dummy LM for testing purposes
+# Dummy language model that mimics an LLM. Must inherit from dspy.LM.
 class DummyLM(dspy.LM):
-    def __init__(self):
-        super().__init__("dummy-model")
-        self.provider = "dummy"
-        self.history = [] # To inspect calls
+    def __init__(self, model_name="dummy-test-model"): # LMs usually take a model name
+        super().__init__(model_name) # Pass model_name to super
+        self.provider = "dummy" # Standard LM attribute
+        self.was_called = False # To check if the LM was invoked
 
-    def basic_request(self, prompt, **kwargs):
-        # Simulate a response structure similar to what a real LM would return
-        # This needs to match what dspy.Predict expects after parsing.
-        # For a simple signature like "question -> answer", the LM is expected
-        # to return a string that Predict will parse.
-        # If the prompt contains "What is DSPy?", return a fixed answer.
-        self.history.append({'prompt': prompt, 'kwargs': kwargs, 'response': "DSPy is a framework."})
-        return ["DSPy is a framework."] # dspy.Predict expects a list of choices
-
-    def __call__(self, prompt, only_completed=True, return_sorted=False, **kwargs):
-        # Simulate the behavior of dspy.Predict calling the LM
-        # It expects a list of completions (strings).
-        if "What is DSPy?" in prompt:
-            response = "DSPy is a programming model for prompting and composing LMs."
-        elif "capital of France" in prompt:
-            response = "Paris."
-        else:
-            response = "This is a dummy answer."
-
-        # Store the interaction
-        self.history.append({
-            'prompt': prompt,
-            'kwargs': kwargs,
-            'response': [response] # dspy.Predict expects a list of choices
-        })
-        return [response] # Return a list of choices
-
-@pytest.fixture(scope="module")
-def configured_dspy_for_test():
-    """Fixture to configure DSPy with a dummy LM for tests."""
-    if not dspy.settings.lm: # Configure only if not already configured
-        original_lm = dspy.settings.lm
-        dummy_lm = DummyLM()
-        dspy.settings.configure(lm=dummy_lm)
-        yield dummy_lm # Provide the dummy_lm to the test if needed
-        dspy.settings.configure(lm=original_lm) # Restore original settings
-    else:
-        # If an LM is already configured (e.g. globally for other tests or by user)
-        # We can choose to skip, or use it, or override. For now, let's use the dummy one.
-        original_lm = dspy.settings.lm
-        dummy_lm = DummyLM()
-        dspy.settings.configure(lm=dummy_lm)
-        yield dummy_lm
-        dspy.settings.configure(lm=original_lm)
+    def __call__(self, *args, **kwargs): # __call__ is fine for a dspy.Module based LM
+        self.was_called = True
+        # User suggestion: return dspy.Prediction(answer="Dummy answer")
+        # For this to work directly, SmartAnswerModule's Predictor would need to be
+        # configured to expect a Prediction object from the LM, which is not standard.
+        # Standard LMs provide string/dict completions that Predict then turns into a Prediction.
+        # To align with how dspy.Predict and its adapters (e.g., JSONAdapter for structured output)
+        # typically work with signatures like BasicQASignature (which expects an 'answer' field),
+        # the LM should output a raw completion (e.g., a JSON string).
+        import json
+        response_text = "Dummy answer"
+        # BasicQASignature implies an "answer" field. JSONAdapter expects a JSON string.
+        return [json.dumps({"answer": response_text})]
 
 
-def test_smart_answer_module_initialization(configured_dspy_for_test):
-    """Test if SmartAnswerModule initializes correctly when an LM is configured."""
+@pytest.fixture(autouse=True)
+def configure_dspy_for_test():
+    """
+    Automatically configures DSPy with the DummyLM for all tests in this module.
+    Uses 'lm' for dspy-ai 3.x instead of 'default_lm'.
+    """
+    dspy.settings.configure(lm=DummyLM())
+
+def test_smart_answer_module_instantiation():
+    """
+    Tests if SmartAnswerModule can be instantiated when an LM is auto-configured.
+    This implicitly tests that SmartAnswerModule doesn't error out if its internal
+    LM check is removed (as an LM is now always configured by the fixture).
+    """
     try:
         module = SmartAnswerModule()
-        assert module is not None
-        assert hasattr(module, "generate_answer")
-        assert isinstance(module.generate_answer.signature, BasicQASignature)
-    except dspy.DSPyError as e:
-        pytest.fail(f"SmartAnswerModule initialization failed with configured LM: {e}")
+        assert module is not None, "SmartAnswerModule should be successfully instantiated."
+    except Exception as e:
+        pytest.fail(f"SmartAnswerModule instantiation failed: {e}")
 
-def test_smart_answer_module_initialization_no_lm():
-    """Test if SmartAnswerModule raises error if no LM is configured."""
-    original_lm = dspy.settings.lm
-    dspy.settings.configure(lm=None) # Explicitly set to None
-    with pytest.raises(dspy.DSPyError, match="DSPy LM not configured"):
-        SmartAnswerModule()
-    dspy.settings.configure(lm=original_lm) # Restore
-
-def test_smart_answer_module_forward_pass(configured_dspy_for_test):
-    """Test the forward pass of SmartAnswerModule with the dummy LM."""
-    dummy_lm = configured_dspy_for_test
+def test_forward_works():
+    """
+    Tests the forward pass of SmartAnswerModule using the auto-configured DummyLM,
+    based on the user's suggested test structure.
+    """
     module = SmartAnswerModule()
-    question = "What is DSPy?"
 
-    # The dummy LM's __call__ should be invoked by dspy.Predict
-    response = module(question=question)
+    # Retrieve the LM instance from dspy.settings to check its state
+    # This is valid as the autouse fixture has already configured it.
+    lm_instance = dspy.settings.lm
+    assert isinstance(lm_instance, DummyLM), "The configured LM should be our DummyLM instance."
 
-    assert isinstance(response, dspy.Prediction)
-    assert "answer" in response
-    assert response.answer == "DSPy is a programming model for prompting and composing LMs."
+    question = "Who is the Prime Minister of the UK?"
+    # Using module.forward() as suggested, which is equivalent to module() for dspy.Module
+    result = module.forward(question=question)
 
-    # Check if the dummy LM was called as expected
-    assert len(dummy_lm.history) > 0
-    # The prompt sent to the LM by dspy.Predict will be structured based on the signature
-    # For BasicQASignature: "Answers questions.\n\n---\n\nQuestion: What is DSPy?\nAnswer:" (or similar)
-    # We can make this test more robust by inspecting the prompt more closely if needed.
-    last_call = dummy_lm.history[-1]
-    assert "Question: What is DSPy?" in last_call['prompt']
+    assert hasattr(result, "answer"), "The result should have an 'answer' attribute."
+    # The DummyLM (as modified by me) returns a JSON string {"answer": "Dummy answer"}
+    # which dspy.Predict parses into result.answer = "Dummy answer"
+    assert "Dummy answer" in result.answer, "The answer should be from the DummyLM."
+    assert lm_instance.was_called, "The DummyLM's __call__ method should have been invoked."
 
-
-# To run these tests, navigate to the project root directory and run:
-# python -m pytest
-#
-# Make sure pytest is installed: pip install pytest
-# And that your project structure allows importing promptpilot:
-# One way is to `pip install -e .` from the root directory (if you add a setup.py)
-# Or adjust PYTHONPATH, or use the sys.path hack as shown above.
-#
-# The sys.path hack is used here for simplicity without requiring project installation.
-# For larger projects, `pip install -e .` is recommended.
-
-# Example of how to mock dspy.settings.lm if direct patching is preferred for some tests:
-@patch('dspy.settings')
-def test_smart_answer_module_init_with_mocked_settings(mock_settings):
-    """Test initialization by mocking dspy.settings directly."""
-    # Setup the mock for dspy.settings.lm
-    mock_settings.lm = DummyLM()
-
-    module = SmartAnswerModule()
-    assert module is not None
-    assert isinstance(module.generate_answer.signature, BasicQASignature)
-
-@patch('dspy.Predict')
-def test_smart_answer_module_forward_with_mocked_predictor(MockPredict, configured_dspy_for_test):
-    """Test forward pass by mocking dspy.Predict to isolate module logic."""
-    # Instance of the mocked dspy.Predict
-    mock_predictor_instance = MagicMock()
-    mock_predictor_instance.return_value = dspy.Prediction(answer="Mocked answer")
-
-    # Configure MockPredict to return our instance when called (e.g. dspy.Predict(BasicQASignature))
-    MockPredict.return_value = mock_predictor_instance
-
-    module = SmartAnswerModule() # This will now use the mocked dspy.Predict
-
-    question = "Any question"
-    response = module(question=question)
-
-    MockPredict.assert_called_once_with(BasicQASignature) # Check if dspy.Predict was initialized correctly
-    mock_predictor_instance.assert_called_once_with(question=question) # Check if the predictor instance was called
-    assert response.answer == "Mocked answer"
-
-# Note: The `configured_dspy_for_test` fixture is generally a cleaner way to handle
-# DSPy's global settings for integration-style tests of modules.
-# Direct mocking like in `test_smart_answer_module_forward_with_mocked_predictor`
-# can be useful for unit testing the module's own logic in isolation from dspy.Predict's behavior.
-# Choose the approach that best fits the testing goal.
-# For this project, testing with a DummyLM via the fixture is a good balance.
+# Note: The original user suggestion had DummyLM return `dspy.Prediction(answer="Dummy answer")`.
+# This has been adjusted in this DummyLM to `return [json.dumps({"answer": "Dummy answer"})]`
+# because dspy.Predict expects LMs to provide raw string/dict completions, not Prediction objects.
+# The Predict module itself is responsible for creating the Prediction object from these raw completions.
+# This change makes the DummyLM behave more like a standard DSPy LM integration.

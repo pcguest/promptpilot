@@ -1,20 +1,40 @@
-# DSPy framework
+# Core DSPy framework
 dspy-ai==3.0.0b2
 
-# LLM Providers - uncomment and install the ones you need
-# openai~=1.0
-# anthropic
-# cohere
-# google-generativeai
-# huggingface_hub
-# transformers
+# --- Optional LLM Providers ---
+# Uncomment and install the specific provider libraries you intend to use.
+# Ensure you also have the necessary API keys and configurations.
 
-# Environment variable management
+# For OpenAI models (e.g., GPT-3.5, GPT-4)
+# openai~=1.0
+
+# For Anthropic models (e.g., Claude)
+# anthropic
+
+# For Cohere models
+# cohere
+
+# For Google Gemini models
+# google-generativeai
+
+# For models from Hugging Face Hub
+# huggingface_hub
+# transformers # Often used in conjunction with Hugging Face models
+
+# --- Utility for Environment Variable Management ---
+# Loads environment variables from a .env file (e.g., for API keys)
 python-dotenv
 
-# For the optional Streamlit UI
+# --- Optional UI Framework ---
+# For building a simple web interface (if desired)
 # streamlit
 
-# For development and linting (optional, manage with your own environment)
+# --- Development and Testing Tools ---
+# These are typically managed within a development environment (e.g., virtualenv)
+# and are not strictly required for running the core application.
+
+# For linting and formatting
 # ruff
+
+# For running automated tests
 # pytest
