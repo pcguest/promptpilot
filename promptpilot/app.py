@@ -1,88 +1,74 @@
-import dspy
-import os
-from dotenv import load_dotenv
+import dspy # Still needed for dspy.settings.lm check and dspy.settings.inspect_history
 import sys
+import os
 
-# Ensure the package root is in sys.path for direct script execution
-# This allows 'from promptpilot.modules...' to work when running 'python promptpilot/app.py'
+# Ensure the package root is in sys.path for direct script execution.
+# This allows 'from promptpilot.modules...' to work when running 'python promptpilot/app.py'.
+# This needs to be done *before* other promptpilot imports.
 if __package__ is None or __package__ == '':
-    # Get the directory of the current script (app.py)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Get the parent directory (project root, assuming app.py is in promptpilot/)
-    project_root = os.path.dirname(script_dir)
+    script_dir = os.path.dirname(os.path.abspath(__file__)) # promptpilot/app.py
+    project_root = os.path.dirname(script_dir) # Parent directory of promptpilot/
     if project_root not in sys.path:
         sys.path.insert(0, project_root)
 
-# Import your DSPy modules
+# Import from our refactored config and modules
+from promptpilot.config import configure_dspy_globally
 from promptpilot.modules.smart_answer import SmartAnswerModule
-
-
-# --- Configuration ---
-def configure_dspy_settings():
-    """
-    Configures DSPy settings, primarily the Language Model.
-    Tries to load settings from environment variables.
-    """
-    load_dotenv()  # Load .env file if present
-
-    # Example: Configure for OpenAI
-    # Ensure you have OPENAI_API_KEY in your .env file or environment
-    api_key = os.getenv("OPENAI_API_KEY")
-    model_name = os.getenv("OPENAI_MODEL_NAME", "gpt-3.5-turbo") # Default model
-
-    if api_key:
-        try:
-            from dspy.openai import OpenAI
-            llm = OpenAI(model=model_name, api_key=api_key)
-            dspy.settings.configure(lm=llm)
-            print(f"DSPy configured with OpenAI model: {model_name}")
-        except ImportError:
-            print("OpenAI library not found. Please install it: pip install openai")
-        except Exception as e:
-            print(f"Error configuring OpenAI: {e}")
-    else:
-        print("OPENAI_API_KEY not found in environment variables.")
-        print("DSPy LM is not configured. Some functionalities will not work.")
-        print("Please create a .env file with OPENAI_API_KEY='your-key' or set it as an environment variable.")
-        print("Alternatively, configure a different LLM provider in `configure_dspy_settings` in app.py.")
 
 # --- Application Logic ---
 def run_smart_answer_example():
     """
     Demonstrates the usage of the SmartAnswerModule.
+    Assumes DSPy has been configured globally.
     """
     if not dspy.settings.lm:
-        print("\nSkipping SmartAnswerModule example because DSPy LM is not configured.")
+        print("\nSkipping SmartAnswerModule example: DSPy LM is not configured globally.")
+        print("Please ensure your .env file is set up and OPENAI_API_KEY is valid.")
         return
 
     print("\n--- Running SmartAnswerModule Example ---")
     try:
+        # SmartAnswerModule will raise an error if LM is not configured,
+        # but we check dspy.settings.lm first for a clearer message.
         smart_answer_pipeline = SmartAnswerModule()
-        question = "What is the capital of Australia?"
+
+        question = "What is the primary benefit of using DSPy for prompt engineering?"
         print(f"Asking: \"{question}\"")
+
         response = smart_answer_pipeline(question=question)
         print(f"Answer: {response.answer}")
 
-        # You can inspect the last interaction with dspy.settings.inspect_history()
+        # To inspect the last interaction (prompt, response, etc.) with the LM:
         # dspy.settings.inspect_history(n=1)
+        # Note: This requires the LM to have history tracking enabled (default for many).
 
+    except dspy.DSPyError as e:
+        print(f"A DSPyError occurred while running SmartAnswerModule: {e}")
+        print("This could be due to issues with the LLM provider, API keys, or network.")
     except Exception as e:
-        print(f"Error running SmartAnswerModule: {e}")
-        print("This might be due to an issue with the LLM configuration or API request.")
+        print(f"An unexpected error occurred: {e}")
 
 def main():
     """
-    Main function to run the PromptPilot application.
+    Main function to initialize configurations and run the PromptPilot application.
     """
     print("Welcome to PromptPilot!")
 
-    # Configure DSPy settings (e.g., LLM)
-    configure_dspy_settings()
+    # Configure DSPy settings globally using the new config module.
+    # This will attempt to load .env, find API keys, and set dspy.settings.lm.
+    if not configure_dspy_globally():
+        # The configure_dspy_globally function already prints detailed messages.
+        print("Application might not function as expected due to LM configuration issues.")
+        # Depending on the application, you might want to exit or allow partial functionality.
+        # For this example, we'll still try to proceed but run_smart_answer_example has its own checks.
 
-    # Run examples or main application logic
+    # Run example application logic
     run_smart_answer_example()
 
-    # Add more application logic here as needed
+    print("\nPromptPilot execution finished.")
+    # Add more application logic or calls to other modules here as needed.
 
 if __name__ == "__main__":
+    # The `if __package__ ...` block at the top handles path adjustments
+    # for direct script execution.
     main()

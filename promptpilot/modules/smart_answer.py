@@ -1,25 +1,25 @@
 import dspy
-
-class BasicQASignature(dspy.Signature):
-    """Answers questions."""
-    question = dspy.InputField(desc="The question to answer.")
-    answer = dspy.OutputField(desc="A concise answer to the question.")
+# Updated import: BasicQASignature is now in promptpilot.signatures
+from ..signatures import BasicQASignature
 
 class SmartAnswerModule(dspy.Module):
     """
-    A DSPy module for generating smart answers to questions.
+    A DSPy module for generating smart answers to questions using a defined signature.
     """
     def __init__(self):
         super().__init__()
-        # Ensure that an LM is configured before initializing predictors
+        # Ensure that an LM is configured globally before initializing predictors.
+        # dspy.Predict requires dspy.settings.lm to be available at initialization.
         if not dspy.settings.lm:
+            # This error message guides the user to configure DSPy globally.
+            # The actual configuration should happen at application startup (e.g., in app.py or config.py).
             raise dspy.DSPyError(
-                "DSPy LM not configured. Please configure an LLM globally using dspy.settings.configure(lm=your_lm_instance). "
-                "For example: "
-                "import dspy; from dspy.openai import OpenAI; "
-                "lm = OpenAI(model='gpt-3.5-turbo', api_key='YOUR_API_KEY'); "
-                "dspy.settings.configure(lm=lm)"
+                "DSPy LM not configured. SmartAnswerModule requires a globally configured LLM. "
+                "Please call `configure_dspy_globally()` or `dspy.settings.configure(lm=your_lm)` "
+                "before instantiating this module."
             )
+
+        # Initialize the predictor with the imported signature
         self.generate_answer = dspy.Predict(BasicQASignature)
 
     def forward(self, question: str) -> dspy.Prediction:
