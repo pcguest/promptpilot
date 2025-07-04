@@ -8,18 +8,18 @@ class SmartAnswerModule(dspy.Module):
     """
     def __init__(self):
         super().__init__()
-        # Ensure that an LM is configured globally before initializing predictors.
-        # dspy.Predict requires dspy.settings.lm to be available at initialization.
+        # Ensure that an LM is configured globally before initialising predictors.
+        # dspy.Predict requires dspy.settings.lm to be available at initialisation.
         if not dspy.settings.lm:
             # This error message guides the user to configure DSPy globally.
             # The actual configuration should happen at application startup (e.g., in app.py or config.py).
-            raise dspy.DSPyError(
+            raise RuntimeError(
                 "DSPy LM not configured. SmartAnswerModule requires a globally configured LLM. "
                 "Please call `configure_dspy_globally()` or `dspy.settings.configure(lm=your_lm)` "
                 "before instantiating this module."
             )
 
-        # Initialize the predictor with the imported signature
+        # Initialise the predictor with the imported signature
         self.generate_answer = dspy.Predict(BasicQASignature)
 
     def forward(self, question: str) -> dspy.Prediction:
@@ -72,6 +72,6 @@ if __name__ == '__main__':
     #     except Exception as e:
     #         print(f"Error in SmartAnswerModule example: {e}")
     #         print("This might be due to missing API keys or incorrect LLM configuration.")
-
-    print("SmartAnswerModule defined. To run the example, uncomment the __main__ block and configure an LLM.")
-    pass
+    #
+    #     print("SmartAnswerModule defined. To run the example, uncomment the __main__ block and configure an LLM.")
+    pass # Add pass to ensure the if block is not empty if all lines within are comments.
