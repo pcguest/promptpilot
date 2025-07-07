@@ -1,128 +1,111 @@
-# Python
+# ===============================
+# Python Bytecode and Build Artifacts
+# ===============================
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
+*.egg
 *.egg-info/
 dist/
 build/
-*.egg
-*.venv/
-venv/
-env/
-ENV/
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-# Icon must end with two \r
-Icon
-
-
-# Thumbnails
-._*
-# Files that might appear in the root of a volume
-.Spotlight-V100
-.Trashes
-# VSCode
-.vscode/
-# PyCharm
-.idea/
-# Jupyter Notebook
-.ipynb_checkpoints
-# MyPy
-.mypy_cache/
-# PyTest
-.pytest_cache/
-# Environments
-.env
-.python-version
-# Build artifacts
-/site/
-# Celery
-celerybeat-schedule.*
-# Sage
-*.sage.py
-# Spyder
-.spyderproject
-.spyproject
-# Rope
-.ropeproject
-# MkDocs
-# Pelican
-/output/
-# Nikola
-# Sphinx
-/_build/
-# PyBuilder
-target/
-# tox
-.tox/
-# dotenv
-# Coverage
-.coverage
-coverage.xml
-htmlcov/
-# C extensions
-# Cython
-*.pyd
-*.html  # Cython HTML reports
-# IDE-specific
-*.swp
-*.swo
-*~
-# Byte-compiled / optimized / DLL files
-*.pyc
-*.pyo
-# Distribution / packaging
-.Python
-develop-eggs/
-downloads/
-eggs/
 .eggs/
 lib/
 lib64/
 parts/
-sdist/
-var/
 wheels/
-pip-wheel-metadata/
+sdist/
 share/python-wheels/
 *.manifest
 *.spec
-# PyInstaller
-# Usually these files are written by a python script from a template
-# before PyInstaller builds the exe, so as to inject date/other infos into it.
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-# Unit test / coverage reports
+.installed.cfg
+MANIFEST
+
+# ====================
+# Virtual Environments
+# ====================
+.venv/
+venv/
+env/
+ENV/
+
+# ========================
+# Dependency/Tool Managers (optional)
+# ========================
+# Pipfile.lock      # Uncomment if you want to ignore, but generally should be tracked
+# poetry.lock       # Uncomment if you want to ignore, but generally should be tracked
+# uv.lock           # Uncomment if you want to ignore, but generally should be tracked
+.pdm-python
+__pypackages__/
+
+# ====================
+# Environment Variables
+# ====================
+.env
+.envrc
+
+# ==========================
+# Unit Test / Coverage Reports
+# ==========================
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.hypothesis/
+.coverage
 .coverage.*
 .cache
 nosetests.xml
+coverage.xml
 *.cover
-*.log
-# pyenv
-# poetry
-poetry.lock
-# pdm
-pdm.lock
-.pdm.toml
-# PEP 582;
-__pypackages__/
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-# SageMath parsed files
-# Environments
-env.bak/
-venv.bak/
-# mypy
-dmypy.json
-dmypy.sock
-# Pyre type checker
+*.py.cover
+
+# ====================
+# Editors & OS
+# ====================
+.DS_Store
+.vscode/
+.idea/
+
+# ========================
+# Jupyter and IPython
+# ========================
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# ====================
+# Lint & Type Checker
+# ====================
+.mypy_cache/
+.dmypy.json
 .pyre/
-# pytype
 .pytype/
-# Cython debug symbols
-cython_debug/
+.ruff_cache/
+
+# ====================
+# Flask/Django
+# ====================
+*.log
+local_settings.py
+instance/
+.webassets-cache
+
+# ====================
+# Sphinx Documentation
+# ====================
+docs/_build/
+
+# ====================
+# Optional Tooling (uncomment if used)
+# ====================
+# .abstra/
+# .cursorignore
+# .cursorindexingignore
+# marimo/_static/
+# marimo/_lsp/
+# __marimo__/
+# .ropeproject
+# .spyderproject
+# .spyproject
+# .pypirc
+# .python-version

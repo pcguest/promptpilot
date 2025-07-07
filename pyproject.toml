@@ -1,0 +1,33 @@
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "promptpilot"
+version = "0.1.0"
+authors = [
+    { name="Paddy Guest", email="paddy@example.com" },
+]
+description = "A production-ready, DSPy-powered CLI tool for LLM orchestration."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "dspy-ai==3.0.0b2",
+    "python-dotenv",
+    "click",
+    "streamlit",
+    "ruff",
+    "pytest",
+]
+
+[project.scripts]
+promptpilot = "promptpilot.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
