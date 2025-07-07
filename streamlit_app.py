@@ -26,7 +26,7 @@ except (ValueError, ImportError, RuntimeError) as e:
 
 # --- Application ---
 st.title("🧠 PromptPilot")
-st.markdown("A smart answering agent powered by DSPy.")
+st.markdown("A discerning answering agent, powered by DSPy.")
 
 
 # --- DSPy Module ---
@@ -39,15 +39,20 @@ def load_smart_answer_agent():
 smart_answer_agent = load_smart_answer_agent()
 
 # --- User Interaction ---
-user_question = st.text_input("Ask a question:", key="question_input")
+with st.container():
+    st.write("Kindly pose your query below:")
+    user_question = st.text_input(
+        "Your question:", key="question_input", label_visibility="collapsed"
+    )
 
-if st.button("Get Answer", key="get_answer_button"):
-    if user_question:
-        with st.spinner("Thinking..."):
-            try:
-                result = smart_answer_agent.forward(question=user_question)
-                st.success(result)
-            except Exception as e:
-                st.error(f"An error occurred: {e}")
-    else:
-        st.warning("Please enter a question.")
+    if st.button("Obtain Answer", key="get_answer_button"):
+        if user_question:
+            with st.spinner("Just a moment, formulating a response..."):
+                try:
+                    result = smart_answer_agent.forward(question=user_question)
+                    st.info(result)  # Changed from st.success to st.info
+                    # for a more neutral tone
+                except Exception as e:
+                    st.error(f"An unforeseen issue occurred: {e}")
+        else:
+            st.warning("Please do type in a question before proceeding.")
